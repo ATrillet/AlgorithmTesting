@@ -1,6 +1,7 @@
 import java.awt.font.TextHitInfo;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.function.IntPredicate;
@@ -15,16 +16,7 @@ public class AlgorithmsPractice {
 		
 	}
 	
-	public static void main(String[] args) {
-		int[] arr = {1,3,5,4,5,2,8,0,1,3,5,8,9,};
-		int[] arr2 = {1,2,3,4,-11,0, 5,-4, -1};
-		int sum = 8;
-		
-		System.out.println(T.findSumPairs(arr, sum));
-		System.out.println(T.findSubArrays(arr2));
-		System.out.println(T.printSubArraysNoSum(arr2));
-
-	}
+	
 	
 	/*
 	 * First thought would be to brute force this and check all
@@ -176,5 +168,139 @@ public class AlgorithmsPractice {
 		return buffer;
 		
 		return "No subarrays";
+	}
+	/*
+	 * Goal is to take in an unsorted binary array, sort it
+	 * and then print it.  This should take linear time and
+	 * constant space.
+	 * 
+	 * First thoughts
+	 * 
+	 * Make a new array and all the ones and then all the zeros
+	 * Would most likely take two passes so would be O(n^2), and
+	 * the creation of a new array would use more than
+	 * constant space
+	 * 
+	 * If I create two temp variables then that would be
+	 * constant space, so I could implement some kind of
+	 * swap function to move the two values if they
+	 * need to be swapped.  This should only take 
+	 * one pass as there can be only 0s or 1s, and
+	 * if we swap a 0 and 1.  Probably wouldn't work
+	 * if we had two 1s and then a 0 at the end
+	 * 
+	 * Learned
+	 * 
+	 * Simple is better sometimes. Dont over think it
+	 * 
+	 * location of -- and ++ can make code
+	 * simpler, but make sure what they
+	 * are actually doing before running.  
+	 */
+	public void sortBinaryArray(int[] A) {
+		int numZeros= 0;
+		for (int i = 0 ; i < A.length ; i++) {
+			if (A[i] == 0) {
+				numZeros++;
+			}
+		}
+		int j = 0;
+		while(numZeros-- != 0) {
+			A[j++] = 0;
+		}
+		
+		while(j < A.length) {
+			A[j++] = 1;
+		}
+	}
+	
+	/*
+	 * Initial thoughts
+	 * 
+	 * Use a Hashset to store each value of the
+	 * array as we go through.  Then use contains,
+	 * constant time, to find if there are duplicates
+	 * 
+	 * This seems to work
+	 * 
+	 * Takes O(n) time and O(n) space.  There is a
+	 * solution that takes the same time, but with
+	 * constant space.  Space hasn't really been a
+	 * large factor in many programs I've written before
+	 * so not as experienced with ways to save on that
+	 * other than just being mindful and not doing
+	 * anything crazy.
+	 * 
+	 *  Should look into space saving methods
+	 */
+	public String findDuplicate(int[] A) {
+		HashSet<Integer> B = new HashSet<>();
+		for (int i = 0 ; i < A.length ; i++) {
+			if (B.contains(A[i])) {
+				return "The duplicate element is " + A[i];
+			} else {
+				B.add(A[i]);
+			}
+		}
+		return "No duplicates found";
+	}
+	
+	
+	/*
+	 * First thoughts
+	 * 
+	 * I'm pretty sure I've done soemthing similar to this
+	 * before, but with a sub array that only contains
+	 * increasing values.
+	 * 
+	 * This one is the largest sub array with non repeating
+	 * values
+	 * 
+	 * Brute force, check all values with all possible
+	 * subarrays. definitly not a good idea
+	 * 
+	 * Use a Map of some kind to keep track of all the
+	 * arrays and if they contain a value already.  Would
+	 * need to keep track of a sub array length value in
+	 * order to know position in the sub array
+	 * 
+	 * Slowly build up a map from the start of the array, adding
+	 * new values if they are not contained.  If they are remove,
+	 * that value from the map, and increase the starting index.
+	 * Do this to the end of the 
+	 */
+	public int findLCSA(int[] A) {
+		HashSet<Integer> B = new HashSet<>();
+		int sublen = 0;
+		int index = 1;
+		for (int i = 0; i < A.length ; i++) {
+			if(B.contains(A[i])) {
+				if (sublen < B.size()) {
+					sublen = B.size();
+				}
+				B.clear();
+				i=index++;
+			}
+			B.add(A[i]);
+			System.out.println(B.size());
+		}
+		return sublen;
+	}
+	
+	public static void main(String[] args) {
+		int[] arr = {1,3,5,4,5,2,8,0,1,3,5,8,9,};
+		int sum = 8;
+		int[] arr2 = {1,2,3,4,-11,0, 5,-4, -1};
+		int[] arr3 = {1,0,1,0,1,0,1,0,0,1,1,1};
+		int[] arr4 = {2,0,2,1,4,3,1,0,4,2,3,6,7,8,6,5,4,5,6,7,8,9,0};
+		
+		System.out.println(T.findSumPairs(arr, sum));
+		System.out.println(T.findSubArrays(arr2));
+		System.out.println(T.printSubArraysNoSum(arr2));
+		T.sortBinaryArray(arr3);
+		System.out.println(Arrays.toString(arr3));
+		System.out.println(T.findDuplicate(arr));
+		System.out.println(T.findLCSA(arr4));
+
 	}
 }
